@@ -38,4 +38,4 @@ jobs:
         eb init -p python-3.11 ML-ebs --region $AWS_REGION --platform python-3.11
         # Set the default environment
         eb use $EB_ENV_NAME
-        eb deploy
+        eb deploy $EB_ENV_NAME
