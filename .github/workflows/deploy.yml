@@ -28,9 +28,9 @@ jobs:
 
     - name: Deploy to Elastic Beanstalk
       env:
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        AWS_REGION: 'us-west-2'  # Replace with your AWS region
+        AWS_ACCESS_KEY_ID: ${{ AKIA4LZXETT5XU4K5ILS }}
+        AWS_SECRET_ACCESS_KEY: ${{ WFzSEAVnttSRrOeCOG3DItYad3vilydT/mQZi/ut }}
+        AWS_REGION: 'us-east-1'  # Replace with your AWS region
       run: |
         pip install awsebcli
         eb init -p python-3.11 ML-ebs --region $AWS_REGION --platform python-3.11
