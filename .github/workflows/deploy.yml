@@ -31,7 +31,11 @@ jobs:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         AWS_REGION: 'us-east-1'  # Replace with your AWS region
+        EB_ENV_NAME: ${{ secrets.EB_ENV_NAME }}
+
       run: |
         pip install awsebcli
         eb init -p python-3.11 ML-ebs --region $AWS_REGION --platform python-3.11
+        # Set the default environment
+        eb use $EB_ENV_NAME
         eb deploy
