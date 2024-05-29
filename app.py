@@ -7,8 +7,9 @@ import io
 from tensorflow.keras.models import load_model
 from tensorflow.keras.losses import MeanSquaredError
 
-app = Flask(__name__)
+application = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
+app=application
 
 # Define custom objects
 custom_objects = {
