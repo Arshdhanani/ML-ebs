@@ -7,9 +7,8 @@ import io
 from tensorflow.keras.models import load_model
 from tensorflow.keras.losses import MeanSquaredError
 
-application = Flask(__name__)
+app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
-app=application
 
 # Define custom objects
 custom_objects = {
@@ -17,7 +16,7 @@ custom_objects = {
 }
 
 # Load your model with custom objects
-model = load_model(r'ML-ebs\trained_model.h5', custom_objects=custom_objects)
+model = load_model('trained_model.h5', custom_objects=custom_objects)
 
 @app.route('/predict', methods=['POST'])
 def predict():
@@ -54,7 +53,7 @@ def predict():
 
 @app.route('/')
 def index():
-    return send_from_directory('.', 'index.html')
+    return send_from_directory('templates', 'index.html')
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8000)
