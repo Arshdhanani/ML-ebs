@@ -16,7 +16,7 @@ custom_objects = {
 }
 
 # Load your model with custom objects
-model = load_model(r'application\trained_model.h5', custom_objects=custom_objects)
+model = load_model(r'ML-ebs\trained_model.h5', custom_objects=custom_objects)
 
 @application.route('/predict', methods=['POST'])
 def predict():
