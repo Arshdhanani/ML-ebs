@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Prediction</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        #image-form {
+            margin-bottom: 20px;
+        }
+        #output-image {
+            max-width: 100%;
+            border: 1px solid #ddd;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Image Prediction</h1>
+    <form id="image-form">
+        <input type="file" id="image-input" accept="image/*" required>
+        <button type="submit">Predict</button>
+    </form>
+    <div id="result">
+        <img id="output-image" src="" alt="Output Image" style="display:none;">
+    </div>
+
+    <script>
+        document.getElementById('image-form').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const imageInput = document.getElementById('image-input');
+            if (imageInput.files.length === 0) {
+                alert('Please select an image.');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('image', imageInput.files[0]);
+
+            try {
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    body: formData
+                });
+                const result = await response.json();
+                if (response.ok) {
+                    const outputImageUrl = result.output_image_url;
+                    const outputImage = document.getElementById('output-image');
+                    outputImage.src = outputImageUrl;
+                    outputImage.style.display = 'block';
+                } else {
+                    alert(result.error || 'Prediction failed.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred while processing your request.');
+            }
+        });
+    </script>
+</body>
+</html>
