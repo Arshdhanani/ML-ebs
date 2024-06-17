@@ -1,12 +1,11 @@
-from flask import Flask, request, jsonify, send_file, send_from_directory
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 from PIL import Image
 import numpy as np
 import cv2
-import io
+import os
 import onnxruntime as ort
 import logging
-import os
 
 # Create directories if they do not exist
 input_dir = 'inputimages'
@@ -41,10 +40,11 @@ def predict(image_array):
 
 @application.route('/predict', methods=['POST'])
 def predict_route():
-    if 'image' not in request.files:
-        return jsonify({'error': 'No image provided'}), 400
+    if 'file' not in request.files or 'input' not in request.form:
+        return jsonify({'error': 'No image or input data provided'}), 400
     
-    image_file = request.files['image']
+    image_file = request.files['file']
+    input_data = request.form['input']
     input_image_path = os.path.join(input_dir, image_file.filename)
     
     try:
@@ -85,7 +85,7 @@ def predict_route():
 
     # Return the relative path of the output image along with the filename
     output_image_url = f"/output/{output_image_filename}"
-    return jsonify({'output_image_url': output_image_url})
+    return jsonify({'output': input_data, 'output_image_url': output_image_url})
 
 @application.route('/output/<filename>')
 def output_file(filename):
