@@ -3,11 +3,11 @@ from flask_cors import CORS
 from PIL import Image
 import numpy as np
 import cv2
-import os
+import io
 import onnxruntime as ort
 import logging
+import os
 
-# Create directories if they do not exist
 input_dir = 'inputimages'
 output_dir = 'outputimages'
 os.makedirs(input_dir, exist_ok=True)
@@ -16,7 +16,7 @@ os.makedirs(output_dir, exist_ok=True)
 application = Flask(__name__)
 CORS(application)  # Enable CORS for all routes
 
-# Load ONNX model with error handling
+# Load ONNX model
 try:
     onnx_model_path = r'/var/app/current/27.onnx'
     ort_session = ort.InferenceSession(onnx_model_path)
@@ -26,25 +26,22 @@ except Exception as e:
     raise e
 
 def preprocess_image(image):
-    # Resize and normalize the image
     new_image = image.resize((224, 224))
     new_image_array = np.array(new_image) / 255.0
     new_image_array = np.expand_dims(new_image_array, axis=0).astype(np.float32)
     return new_image_array
 
 def predict(image_array):
-    # Run the ONNX model
     ort_inputs = {ort_session.get_inputs()[0].name: image_array}
     ort_outs = ort_session.run(None, ort_inputs)
     return ort_outs[0]
 
 @application.route('/predict', methods=['POST'])
 def predict_route():
-    if 'file' not in request.files or 'input' not in request.form:
-        return jsonify({'error': 'No image or input data provided'}), 400
+    if 'file' not in request.files:
+        return jsonify({'error': 'No image provided'}), 400
     
     image_file = request.files['file']
-    input_data = request.form['input']
     input_image_path = os.path.join(input_dir, image_file.filename)
     
     try:
@@ -85,11 +82,7 @@ def predict_route():
 
     # Return the relative path of the output image along with the filename
     output_image_url = f"/output/{output_image_filename}"
-    return jsonify({'output': input_data, 'output_image_url': output_image_url})
-
-@application.route('/output/<filename>')
-def output_file(filename):
-    return send_from_directory(output_dir, filename)
+    return jsonify({'output_image_url': output_image_url})
 
 @application.route('/')
 def index():
