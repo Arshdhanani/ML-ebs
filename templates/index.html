@@ -3,102 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AWS Server Frontend</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-        .form-container {
-            max-width: 500px;
-            margin: auto;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        .form-group label {
-            display: block;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-        .form-group input[type="file"] {
-            margin-top: 5px;
-        }
-        .form-group textarea {
-            height: 100px;
-            resize: none;
-        }
-        .form-group button {
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-        .form-group button:hover {
-            background-color: #0056b3;
-        }
-        .result-container {
-            margin-top: 20px;
-        }
-        .result-container img {
-            max-width: 100%;
-            margin-top: 10px;
-        }
-    </style>
+    <title>Upload Image for Processing</title>
 </head>
 <body>
-    <div class="form-container">
-        <h2>Upload Image and Input Data</h2>
-        <div class="form-group">
-            <label for="image">Select Image:</label>
-            <input type="file" id="image" name="image" accept="image/*">
-        </div>
-        <div class="form-group">
-            <label for="inputData">Input Data:</label>
-            <textarea id="inputData" name="inputData" placeholder="Enter input data (optional)"></textarea>
-        </div>
-        <div class="form-group">
-            <button onclick="submitForm()">Submit</button>
-        </div>
-    </div>
+    <h1>Upload Image for Processing</h1>
+    
+    <form id="uploadForm" enctype="multipart/form-data">
+        <input type="file" name="file" id="file">
+        <br><br>
+        <button type="button" onclick="submitForm()">Submit</button>
+    </form>
 
-    <div class="result-container" id="resultContainer" style="display: none;">
-        <h2>Result</h2>
-        <p><strong>Output Image:</strong></p>
-        <img id="outputImage" src="" alt="Output Image">
-        <p><strong>Output Image URL:</strong> <span id="outputImageUrl"></span></p>
-    </div>
+    <div id="result"></div>
 
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
         function submitForm() {
-            const formData = new FormData();
-            const imageFile = document.getElementById('image').files[0];
-            const inputData = document.getElementById('inputData').value;
+            var form = document.getElementById('uploadForm');
+            var formData = new FormData(form);
 
-            if (!imageFile) {
-                alert('Please select an image.');
-                return;
-            }
-
-            formData.append('image', imageFile);
-            formData.append('input', inputData);
-
-            axios.post('http://ebss-env.eba-wmpcqnqf.us-east-1.elasticbeanstalk.com/predict', formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
+            fetch('/predict', {  // Replace with actual AWS API URL
+                method: 'POST',
+                body: formData
             })
-            .then(response => {
-                console.log(response.data);
-                document.getElementById('resultContainer').style.display = 'block';
-                document.getElementById('outputImage').src = 'http://ebss-env.eba-wmpcqnqf.us-east-1.elasticbeanstalk.com/predict' + response.data.output_image_url;
-                document.getElementById('outputImageUrl').textContent = response.data.output_image_url;
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                document.getElementById('result').innerHTML = `
+                    <p>Output Image URL: ${data.output_image_url}</p>
+                `;
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('Failed to get prediction from AWS server.');
+                document.getElementById('result').innerHTML = `<p>Error: ${error.message}</p>`;
             });
         }
     </script>
