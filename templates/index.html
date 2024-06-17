@@ -21,20 +21,23 @@
             var form = document.getElementById('uploadForm');
             var formData = new FormData(form);
 
-            fetch('/predict', {  // Replace with actual AWS API URL
+            fetch('/predict', {
                 method: 'POST',
                 body: formData
             })
             .then(response => response.json())
             .then(data => {
                 console.log(data);
-                document.getElementById('result').innerHTML = `
-                    <p>Output Image URL: ${data.output_image_url}</p>
+                var resultDiv = document.getElementById('result');
+                resultDiv.innerHTML = `
+                    <p>Output Image URL: <a href="${data.output_image_url}" target="_blank">${data.output_image_url}</a></p>
+                    <img src="${data.output_image_url}" alt="Processed Image" style="max-width: 100%;">
                 `;
             })
             .catch(error => {
                 console.error('Error:', error);
-                document.getElementById('result').innerHTML = `<p>Error: ${error.message}</p>`;
+                var resultDiv = document.getElementById('result');
+                resultDiv.innerHTML = `<p>Error: ${error.message}</p>`;
             });
         }
     </script>
