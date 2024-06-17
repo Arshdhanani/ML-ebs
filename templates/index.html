@@ -93,7 +93,7 @@
             .then(response => {
                 console.log(response.data);
                 document.getElementById('resultContainer').style.display = 'block';
-                document.getElementById('outputImage').src = 'http://your-aws-server-url' + response.data.output_image_url;
+                document.getElementById('outputImage').src = 'http://ebss-env.eba-wmpcqnqf.us-east-1.elasticbeanstalk.com/predict' + response.data.output_image_url;
                 document.getElementById('outputImageUrl').textContent = response.data.output_image_url;
             })
             .catch(error => {
