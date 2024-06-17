@@ -85,7 +85,7 @@
             formData.append('image', imageFile);
             formData.append('input', inputData);
 
-            axios.post('http://your-aws-server-url/predict', formData, {
+            axios.post('http://ebss-env.eba-wmpcqnqf.us-east-1.elasticbeanstalk.com/predict', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }
